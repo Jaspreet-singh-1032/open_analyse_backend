@@ -32,7 +32,7 @@ class UserViewSet(ListModelMixin, GenericViewSet):
                 'email'), password=serializer.validated_data.get('password'))
             if user:
                 token, created = Token.objects.get_or_create(user=user)
-                return Response({'detail': 'login success', 'token': token.key})
+                return Response({'detail': 'login success', 'user': self.serializer_class(user).data, 'token': token.key})
             return Response({'detail': 'invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
