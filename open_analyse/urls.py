@@ -20,13 +20,25 @@ from django.urls import path, include
 from rest_framework import routers
 
 # views import
+
+# user
 from user.views import (
     UserViewSet
 )
 
+# activities
+from activities.views import (
+    ActivityTypesViewSet
+)
+
 router = routers.SimpleRouter()
 
+# user
 router.register(r'user', UserViewSet, basename='user')
+
+# activities
+router.register(r'activities/activity-types',
+                ActivityTypesViewSet, basename='activity-types')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
