@@ -9,7 +9,7 @@ from rest_framework import status
 from user.models import User
 
 
-class UserTestCase(TestCase):
+class UserAPITestCase(TestCase):
 
     def setUp(self):
         user = User(email='test@gmail.com')
@@ -20,6 +20,14 @@ class UserTestCase(TestCase):
 
     def test_user_login_empty_data_fails(self):
         data = {}
+        response = self.client.post(reverse('user-login'), data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_user_login_empty_values_fails(self):
+        data = {
+            "email": "",
+            "password": ""
+        }
         response = self.client.post(reverse('user-login'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
