@@ -1,3 +1,6 @@
 from django.test import TestCase
 
-# Create your tests here.
+
+class ActivityTypesApiTestCase(TestCase):
+    def setUp(self):
+        user = self.client.post()

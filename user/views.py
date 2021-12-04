@@ -42,5 +42,5 @@ class UserViewSet(ListModelMixin, GenericViewSet):
         if serializer.is_valid():
             user = serializer.save()
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'detail': 'registered successfully', 'token': token.key}, status=status.HTTP_201_CREATED)
+            return Response({'detail': 'registered successfully', 'user': serializer.data, 'token': token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
