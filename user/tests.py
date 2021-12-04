@@ -118,5 +118,7 @@ class UserAPITestCase(TestCase):
         }
         response = self.client.post(reverse('user-register'), data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        login = self.client.post(reverse('user-login'), data=data)
+        self.assertEqual(login.status_code, status.HTTP_200_OK)
 
     # ===========================================================================
