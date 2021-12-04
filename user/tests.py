@@ -1,5 +1,5 @@
 # django imports
-from django.test import TestCase
+from rest_framework.test import APITestCase
 from django.urls import reverse
 
 # drf imports
@@ -9,7 +9,7 @@ from rest_framework import status
 from user.models import User
 
 
-class UserAPITestCase(TestCase):
+class UserAPITestCase(APITestCase):
 
     def setUp(self):
         user = User(email='test@gmail.com')
@@ -118,6 +118,8 @@ class UserAPITestCase(TestCase):
         }
         response = self.client.post(reverse('user-register'), data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json().get('user')[
+                         'email'], data.get('email'))
         login = self.client.post(reverse('user-login'), data=data)
         self.assertEqual(login.status_code, status.HTTP_200_OK)
 

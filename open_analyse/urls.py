@@ -38,7 +38,7 @@ router.register(r'user', UserViewSet, basename='user')
 
 # activities
 router.register(r'activities/activity-types',
-                ActivityTypesViewSet, basename='activity-types')
+                ActivityTypesViewSet, basename='activity_types')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
