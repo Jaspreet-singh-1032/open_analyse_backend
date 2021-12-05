@@ -15,17 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
-# drf imports
 from rest_framework import routers
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 # views import
-
 # user
 from user.views import (
     UserViewSet
 )
-
 # activities
 from activities.views import (
     ActivityTypesViewSet
@@ -40,7 +39,22 @@ router.register(r'user', UserViewSet, basename='user')
 router.register(r'activities/activity-types',
                 ActivityTypesViewSet, basename='activity_types')
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="openAnalyse",
+        default_version='v1',
+        description="Api's for openAnalyse",
+        terms_of_service="",
+        contact=openapi.Contact(email=""),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
 urlpatterns = [
+    path('', schema_view.with_ui('redoc', cache_timeout=0),
+         name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls))
 ]
