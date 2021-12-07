@@ -1,6 +1,3 @@
-# python imports
-import random
-
 # django imports
 from django.urls import reverse
 

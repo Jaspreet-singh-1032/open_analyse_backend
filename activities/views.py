@@ -56,4 +56,3 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
             total_time_spent=Sum('activities__time_spent'))
         serializer = self.serializer_class(activities, many=True)
         return Response(serializer.data)
-        return Response()
