@@ -5,11 +5,16 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
+# third party imports
+from django_seed import Seed
+
 # model imports
 from activities.models import (
-    ActivityType
+    ActivityType,
+    Activity
 )
 from user.models import User
+from rest_framework.authtoken.models import Token
 
 
 class ActivityTypesApiTestCase(APITestCase):
@@ -18,8 +23,9 @@ class ActivityTypesApiTestCase(APITestCase):
             'email': "test@gmail.com",
             'password': 'test'
         }
-        user = self.client.post(reverse('user-register'), data=data)
-        self.token = user.json().get('token')
+        self.user = User.objects.create(
+            email='testuser@gmail.com', password='testuser')
+        self.token = Token.objects.create(user=self.user)
         self.list_url = reverse('activity_types-list')
 
     def create_activity_type(self):
@@ -49,6 +55,7 @@ class ActivityTypesApiTestCase(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
     # ======================= Create activity types =======================
+
     def test_create_activity_type_unauthenticated_fails(self):
         response = self.client.post(self.list_url, data={})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -83,6 +90,7 @@ class ActivityTypesApiTestCase(APITestCase):
         self.assertEqual(response.json().get('name'), data.get('name'))
 
     # ======================= Delete activity type =======================
+
     def test_delete_activity_type_invalid_id_fails(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
         response = self.client.delete(
@@ -103,3 +111,16 @@ class ActivityTypesApiTestCase(APITestCase):
         response = self.client.delete(
             reverse('activity_types-detail', kwargs={'pk': activity_id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # ======================= Test api actions =======================
+
+    def test_fetch_activities_unauthenticated_fails(self):
+        response = self.client.get(
+            reverse('activity_types-fetch_activities'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_fetch_activities_authenticated_succeed(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        response = self.client.get(
+            reverse('activity_types-fetch_activities'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

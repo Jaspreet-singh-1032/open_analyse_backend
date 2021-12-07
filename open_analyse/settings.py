@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'corsheaders',
     'drf_yasg',
+    'django_seed',
 
     # apps
     'user',
