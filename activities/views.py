@@ -1,3 +1,6 @@
+# django import
+from django.db.models import Sum
+
 # drf imports
 from rest_framework.viewsets import (
     GenericViewSet
@@ -20,7 +23,8 @@ from .models import (
 # serializers import
 from .serializers import (
     ActivityTypeSerializer,
-    ActivitySerializer
+    ActivitySerializer,
+    FetchActivitiesSerializer
 )
 
 
@@ -45,7 +49,11 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response()
 
-    @action(detail=False, methods=['get'], serializer_class=ActivitySerializer)
-    def activities(self, request):
-        # fetch all activities with related activity type
-        pass
+    @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer, url_name='fetch_activities')
+    def fetch_activities(self, request):
+        # fetch all activity_types and total time spend on each
+        activities = self.get_queryset().values('id', 'name').annotate(
+            total_time_spent=Sum('activities__time_spent'))
+        serializer = self.serializer_class(activities, many=True)
+        return Response(serializer.data)
+        return Response()

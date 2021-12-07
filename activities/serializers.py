@@ -1,7 +1,11 @@
 # drf imports
 from rest_framework.serializers import (
     ModelSerializer,
-    StringRelatedField
+    StringRelatedField,
+    Serializer,
+    IntegerField,
+    CharField,
+    TimeField
 )
 
 # model imports
@@ -23,3 +27,9 @@ class ActivitySerializer(ModelSerializer):
     class Meta:
         model = Activity
         fields = ('id', 'time_spent', 'activity_type')
+
+
+class FetchActivitiesSerializer(Serializer):
+    id = IntegerField()
+    name = CharField()  # activity_type name
+    total_time_spent = CharField()
