@@ -151,4 +151,5 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'NON_FIELD_ERRORS_KEY':'detail'
 }
