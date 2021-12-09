@@ -16,6 +16,8 @@ from activities.models import (
 from user.models import User
 from rest_framework.authtoken.models import Token
 
+seeder = Seed()
+faker = seeder.faker()
 
 class ActivityTypesApiTestCase(APITestCase):
     def setUp(self):
@@ -88,6 +90,22 @@ class ActivityTypesApiTestCase(APITestCase):
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json().get('name'), data.get('name'))
+    
+    def test_create_activity_type_duplicate_name_fails(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        name = faker.name()    
+        ActivityType.objects.create(name = name , user = self.user)
+        data = {
+            'name':name
+        }
+        response = self.client.post(self.list_url , data = data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json(), 
+            {
+                'detail':["'{}' for this user already exists!".format(name)]
+            }
+        )
+
 
     # ======================= Delete activity type =======================
 

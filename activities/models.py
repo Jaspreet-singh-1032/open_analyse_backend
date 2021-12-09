@@ -12,6 +12,12 @@ class ActivityType(TimeStampedModel):
     def __str__(self):
         return self.name
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'name'], name='unique_activitytype')
+        ]
+
 
 class Activity(TimeStampedModel):
     time_spent = models.TimeField()

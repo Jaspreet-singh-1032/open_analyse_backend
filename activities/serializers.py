@@ -5,7 +5,8 @@ from rest_framework.serializers import (
     Serializer,
     IntegerField,
     CharField,
-    TimeField
+    TimeField,
+    ValidationError
 )
 
 # model imports
@@ -19,6 +20,11 @@ class ActivityTypeSerializer(ModelSerializer):
     class Meta:
         model = ActivityType
         fields = ('id', 'name')
+
+    def validate(self, data):
+        if ActivityType.objects.filter(user=self.context['request'].user , name = data.get('name')).exists():
+            raise ValidationError("'{}' for this user already exists!".format(data.get('name')))
+        return data
 
 
 class ActivitySerializer(ModelSerializer):
