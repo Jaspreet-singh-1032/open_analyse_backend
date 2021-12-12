@@ -44,10 +44,9 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, activity_type=activity_type)
-            return Response(serializer.data)
+            return Response(serializer.data , status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response()
 
     @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer, url_name='fetch_activities')
     def fetch_activities(self, request):
