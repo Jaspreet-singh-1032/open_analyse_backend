@@ -13,6 +13,7 @@ from rest_framework.mixins import (
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 
 # models import
 from .models import (
@@ -44,15 +45,26 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, activity_type=activity_type)
-            return Response(serializer.data)
+            return Response(serializer.data , status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response()
 
     @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer, url_name='fetch_activities')
     def fetch_activities(self, request):
-        # fetch all activity_types and total time spend on each
+        # return all activity_types and total time spend on each
         activities = self.get_queryset().values('id', 'name').annotate(
             total_time_spent=Sum('activities__time_spent'))
         serializer = self.serializer_class(activities, many=True)
         return Response(serializer.data)
+    
+
+class ActivitesViewSet(ListModelMixin,GenericViewSet):
+    serializer_class = ActivitySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = {
+        'created':['lte','gte']
+    }
+
+    def get_queryset(self):
+        return Activity.objects.select_related('activity_type').filter(user = self.request.user).order_by('-created')
+    
