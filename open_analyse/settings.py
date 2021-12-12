@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'django_seed',
+    'django_filters',
 
     # apps
     'user',

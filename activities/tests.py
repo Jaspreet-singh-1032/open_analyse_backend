@@ -1,5 +1,9 @@
+# python imports
+import datetime
+
 # django imports
 from django.urls import reverse
+from django.core import management
 
 # drf imports
 from rest_framework.test import APITestCase
@@ -16,8 +20,8 @@ from activities.models import (
 from user.models import User
 from rest_framework.authtoken.models import Token
 
-seeder = Seed()
-faker = seeder.faker()
+seeder = Seed.seeder()
+faker = Seed.faker()
 
 class ActivityTypesApiTestCase(APITestCase):
     def setUp(self):
@@ -142,3 +146,35 @@ class ActivityTypesApiTestCase(APITestCase):
         response = self.client.get(
             reverse('activity_types-fetch_activities'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ActivitiesApiTestCase(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(
+            email=faker.email(), password=faker.password())
+        self.token = Token.objects.create(user=self.user)
+
+    def test_list_activities_unauthenticated_fails(self):
+        response = self.client.get(reverse('activities-list'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_list_activities_authenticated_succeed(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        response = self.client.get(reverse('activities-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_list_activities_num_queries(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        activity_type = ActivityType.objects.create(
+            user=self.user,
+            name = faker.name()
+        )
+        seeder.add_entity(Activity , 100,{
+            'user':self.user,
+            'activity_type':activity_type,
+            'time_spent':'1:10'
+        })
+        seeder.execute()
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse("activities-list"), format="json")
