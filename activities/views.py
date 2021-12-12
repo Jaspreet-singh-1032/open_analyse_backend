@@ -66,5 +66,5 @@ class ActivitesViewSet(ListModelMixin,GenericViewSet):
     }
 
     def get_queryset(self):
-        return Activity.objects.select_related('activity_type').filter(user = self.request.user)
+        return Activity.objects.select_related('activity_type').filter(user = self.request.user).order_by('-created')
     
