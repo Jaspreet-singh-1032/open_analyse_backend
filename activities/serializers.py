@@ -6,7 +6,7 @@ from rest_framework.serializers import (
     IntegerField,
     CharField,
     TimeField,
-    ValidationError
+    ValidationError,
 )
 
 # model imports

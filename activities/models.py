@@ -20,7 +20,7 @@ class ActivityType(TimeStampedModel):
 
 
 class Activity(TimeStampedModel):
-    time_spent = models.TimeField()
+    time_spent = models.IntegerField()
 
     # relationship fields
     activity_type = models.ForeignKey(

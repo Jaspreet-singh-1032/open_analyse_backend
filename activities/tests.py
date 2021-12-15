@@ -173,7 +173,7 @@ class ActivitiesApiTestCase(APITestCase):
         seeder.add_entity(Activity , 100,{
             'user':self.user,
             'activity_type':activity_type,
-            'time_spent':'1:10'
+            'time_spent':3600
         })
         seeder.execute()
         with self.assertNumQueries(2):
