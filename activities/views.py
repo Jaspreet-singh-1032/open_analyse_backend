@@ -1,5 +1,8 @@
+# python imports
+from datetime import datetime , timedelta
+
 # django import
-from django.db.models import Sum
+from django.db.models import Sum, Case, When, IntegerField
 
 # drf imports
 from rest_framework.viewsets import (
@@ -49,11 +52,19 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer, url_name='fetch_activities')
+    @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer,url_name='fetch_activities',)
     def fetch_activities(self, request):
         '''returns all activity_types and total time spend on each'''
-        activities = self.get_queryset().values('id', 'name').annotate(
-            total_time_spent=Sum('activities__time_spent'))
+        days = int(self.request.query_params.get('days') or 7)
+        filter_days = datetime.now() - timedelta(days=days)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        activities = queryset.values('id', 'name').annotate(
+            total_time_spent=Sum(Case(
+                When(activities__created__date__gte=filter_days.date() , then= 'activities__time_spent'),
+                default=0,
+                output_field=IntegerField()
+            )))
         serializer = self.serializer_class(activities, many=True)
         return Response(serializer.data)
     
@@ -62,7 +73,7 @@ class ActivitesViewSet(ListModelMixin,GenericViewSet):
     serializer_class = ActivitySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = {
-        'created':['lte','gte']
+        'created':['lte','gte'],
     }
 
     def get_queryset(self):
