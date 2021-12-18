@@ -51,7 +51,7 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
 
     @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer, url_name='fetch_activities')
     def fetch_activities(self, request):
-        # return all activity_types and total time spend on each
+        '''returns all activity_types and total time spend on each'''
         activities = self.get_queryset().values('id', 'name').annotate(
             total_time_spent=Sum('activities__time_spent'))
         serializer = self.serializer_class(activities, many=True)
