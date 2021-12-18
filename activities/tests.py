@@ -1,5 +1,6 @@
 # python imports
 import datetime
+import random
 
 # django imports
 from django.urls import reverse
@@ -25,12 +26,8 @@ faker = Seed.faker()
 
 class ActivityTypesApiTestCase(APITestCase):
     def setUp(self):
-        data = {
-            'email': "test@gmail.com",
-            'password': 'test'
-        }
         self.user = User.objects.create(
-            email='testuser@gmail.com', password='testuser')
+            email=faker.email, password='testuser')
         self.token = Token.objects.create(user=self.user)
         self.list_url = reverse('activity_types-list')
 
@@ -45,7 +42,7 @@ class ActivityTypesApiTestCase(APITestCase):
 
     @staticmethod
     def create_activity_type_with_different_user():
-        user = User.objects.create(email='new@gmail.com', password='new')
+        user = User.objects.create(email='new1@gmail.com', password='new')
         activity_type = ActivityType.objects.create(name='test', user=user)
         return activity_type.id
 
@@ -146,6 +143,24 @@ class ActivityTypesApiTestCase(APITestCase):
         response = self.client.get(
             reverse('activity_types-fetch_activities'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_fetch_activities_num_queries(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        seeder.add_entity(ActivityType ,10, {
+            'user':self.user
+        })
+        inserted = seeder.execute()
+        seeder.add_entity(Activity , 100 , {
+            'time_spent':lambda x: random.randint(1, 36000),
+            'activity_type': lambda x:ActivityType.objects.get(
+                id = random.choice(inserted[ActivityType])
+            ),
+            'user':self.user
+        })
+        seeder.execute()
+        with self.assertNumQueries(2):
+            response = self.client.get(
+            reverse('activity_types-fetch_activities'))
 
 
 class ActivitiesApiTestCase(APITestCase):
