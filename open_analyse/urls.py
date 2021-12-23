@@ -39,7 +39,7 @@ router.register(r'user', UserViewSet, basename='user')
 # activities
 router.register(r'activities/activity-types',
                 ActivityTypesViewSet, basename='activity_types')
-router.register(r'activities', ActivitesViewSet , basename='activities')
+router.register(r'activities', ActivitesViewSet, basename='activities')
 
 schema_view = get_schema_view(
     openapi.Info(

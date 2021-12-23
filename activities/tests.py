@@ -1,10 +1,8 @@
 # python imports
-import datetime
 import random
 
 # django imports
 from django.urls import reverse
-from django.core import management
 
 # drf imports
 from rest_framework.test import APITestCase
@@ -23,6 +21,7 @@ from rest_framework.authtoken.models import Token
 
 seeder = Seed.seeder()
 faker = Seed.faker()
+
 
 class ActivityTypesApiTestCase(APITestCase):
     def setUp(self):
@@ -91,22 +90,21 @@ class ActivityTypesApiTestCase(APITestCase):
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json().get('name'), data.get('name'))
-    
+
     def test_create_activity_type_duplicate_name_fails(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
-        name = faker.name()    
-        ActivityType.objects.create(name = name , user = self.user)
+        name = faker.name()
+        ActivityType.objects.create(name=name, user=self.user)
         data = {
-            'name':name
+            'name': name
         }
-        response = self.client.post(self.list_url , data = data)
+        response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), 
-            {
-                'detail':["'{}' for this user already exists!".format(name)]
-            }
+        self.assertEqual(response.json(),
+                         {
+            'detail': ["'{}' for this user already exists!".format(name)]
+        }
         )
-
 
     # ======================= Delete activity type =======================
 
@@ -146,21 +144,21 @@ class ActivityTypesApiTestCase(APITestCase):
 
     def test_fetch_activities_num_queries(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
-        seeder.add_entity(ActivityType ,10, {
-            'user':self.user
+        seeder.add_entity(ActivityType, 10, {
+            'user': self.user
         })
         inserted = seeder.execute()
-        seeder.add_entity(Activity , 100 , {
-            'time_spent':lambda x: random.randint(1, 36000),
-            'activity_type': lambda x:ActivityType.objects.get(
-                id = random.choice(inserted[ActivityType])
+        seeder.add_entity(Activity, 100, {
+            'time_spent': lambda x: random.randint(1, 36000),
+            'activity_type': lambda x: ActivityType.objects.get(
+                id=random.choice(inserted[ActivityType])
             ),
-            'user':self.user
+            'user': self.user
         })
         seeder.execute()
         with self.assertNumQueries(2):
-            response = self.client.get(
-            reverse('activity_types-fetch_activities'))
+            self.client.get(
+                reverse('activity_types-fetch_activities'))
 
 
 class ActivitiesApiTestCase(APITestCase):
@@ -178,18 +176,18 @@ class ActivitiesApiTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
         response = self.client.get(reverse('activities-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
     def test_list_activities_num_queries(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
         activity_type = ActivityType.objects.create(
             user=self.user,
-            name = faker.name()
+            name=faker.name()
         )
-        seeder.add_entity(Activity , 100,{
-            'user':self.user,
-            'activity_type':activity_type,
-            'time_spent':3600
+        seeder.add_entity(Activity, 100, {
+            'user': self.user,
+            'activity_type': activity_type,
+            'time_spent': 3600
         })
         seeder.execute()
         with self.assertNumQueries(2):
-            response = self.client.get(reverse("activities-list"), format="json")
+            self.client.get(reverse("activities-list"), format="json")

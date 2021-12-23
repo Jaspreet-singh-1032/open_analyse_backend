@@ -1,5 +1,4 @@
 # django imports
-from django.conf import settings
 from django.contrib.auth import authenticate
 
 # drf imports
@@ -32,8 +31,13 @@ class UserViewSet(ListModelMixin, GenericViewSet):
                 'email'), password=serializer.validated_data.get('password'))
             if user:
                 token, created = Token.objects.get_or_create(user=user)
-                return Response({'detail': 'login success', 'user': self.serializer_class(user).data, 'token': token.key})
-            return Response({'detail': 'invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {'detail': 'login success', 'user': self.serializer_class(user).data, 'token': token.key}
+                )
+            return Response(
+                {'detail': 'invalid credentials'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
@@ -42,5 +46,8 @@ class UserViewSet(ListModelMixin, GenericViewSet):
         if serializer.is_valid():
             user = serializer.save()
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'detail': 'registered successfully', 'user': serializer.data, 'token': token.key}, status=status.HTTP_201_CREATED)
+            return Response(
+                {'detail': 'registered successfully', 'user': serializer.data, 'token': token.key},
+                status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

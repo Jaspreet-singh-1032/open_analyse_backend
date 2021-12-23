@@ -5,7 +5,6 @@ from rest_framework.serializers import (
     Serializer,
     IntegerField,
     CharField,
-    TimeField,
     ValidationError,
 )
 
@@ -22,7 +21,7 @@ class ActivityTypeSerializer(ModelSerializer):
         fields = ('id', 'name')
 
     def validate(self, data):
-        if ActivityType.objects.filter(user=self.context['request'].user , name = data.get('name')).exists():
+        if ActivityType.objects.filter(user=self.context['request'].user, name=data.get('name')).exists():
             raise ValidationError("'{}' for this user already exists!".format(data.get('name')))
         return data
 

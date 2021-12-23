@@ -8,7 +8,8 @@ from .models import (
 
 admin.site.register((ActivityType))
 
+
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-    fields = ('time_spent' , 'activity_type' , 'user' , 'created')
-    readonly_fields = ('created' , )
+    fields = ('time_spent', 'activity_type', 'user', 'created')
+    readonly_fields = ('created', )
