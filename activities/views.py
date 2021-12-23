@@ -1,5 +1,5 @@
 # python imports
-from datetime import datetime , timedelta
+from datetime import datetime, timedelta
 
 # django import
 from django.db.models import Sum, Case, When, IntegerField
@@ -48,11 +48,11 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, activity_type=activity_type)
-            return Response(serializer.data , status = status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer,url_name='fetch_activities',)
+    @action(detail=False, methods=['get'], serializer_class=FetchActivitiesSerializer, url_name='fetch_activities',)
     def fetch_activities(self, request):
         '''returns all activity_types and total time spend on each'''
         days = int(self.request.query_params.get('days') or 7)
@@ -61,21 +61,21 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
         queryset = self.filter_queryset(self.get_queryset())
         activities = queryset.values('id', 'name').annotate(
             total_time_spent=Sum(Case(
-                When(activities__created__date__gte=filter_days.date() , then= 'activities__time_spent'),
+                When(activities__created__date__gte=filter_days.date(),
+                     then='activities__time_spent'),
                 default=0,
                 output_field=IntegerField()
             )))
         serializer = self.serializer_class(activities, many=True)
         return Response(serializer.data)
-    
 
-class ActivitesViewSet(ListModelMixin,GenericViewSet):
+
+class ActivitesViewSet(ListModelMixin, GenericViewSet):
     serializer_class = ActivitySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = {
-        'created':['lte','gte'],
+        'created': ['lte', 'gte'],
     }
 
     def get_queryset(self):
-        return Activity.objects.select_related('activity_type').filter(user = self.request.user).order_by('-created')
-    
+        return Activity.objects.select_related('activity_type').filter(user=self.request.user).order_by('-created')
