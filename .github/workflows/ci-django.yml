@@ -7,6 +7,7 @@ on:
     branches: [master]
 env:
   DATABASE_URL: postgres://postgres:postgres@localhost:5432/github_actions
+  IS_GITHUB_ACTION: True
 
 jobs:
   build:
