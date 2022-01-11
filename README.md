@@ -1,5 +1,7 @@
 ## openAnalyse is an open-source application that helps users to analyse how they are investing their time.
 
+### Live Website : https://openanalyse.netlify.app/
+
 
 **Frontend at** https://github.com/Jaspreet-singh-1032/openAnalyse-frontend
 
