@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [master]
 env:
-  DATABASE_URL: postgres://postgres:postgres@postgres:5432/github_actions
+  DATABASE_URL: postgres://postgres:postgres@localhost:5432/github_actions
 
 jobs:
   build:
