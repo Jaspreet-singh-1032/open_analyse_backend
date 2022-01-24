@@ -2,9 +2,9 @@ name: Django CI
 
 on:
   push:
-    branches: [master]
+    branches: [test1]
   pull_request:
-    branches: [master]
+    branches: [test1]
 env:
   DATABASE_URL: postgres://postgres:postgres@localhost:5432/github_actions
   IS_GITHUB_ACTION: True
