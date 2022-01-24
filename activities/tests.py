@@ -23,6 +23,19 @@ seeder = Seed.seeder()
 faker = Seed.faker()
 
 
+def turn_on_auto_add_fields(model):
+    '''
+    When we run seeder.execute()
+    seeder set the auto_now=False and auto_now_add=False
+    run this function to turn on auto add fields
+    '''
+    for field in model._meta.fields:
+        if hasattr(field, 'auto_now'):
+            field.auto_now = True
+        if hasattr(field, 'auto_now_add'):
+            field.auto_now_add = True
+
+
 class ActivityTypesApiTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(
@@ -160,6 +173,28 @@ class ActivityTypesApiTestCase(APITestCase):
             self.client.get(
                 reverse('activity_types-fetch_activities'))
 
+    def test_add_activity_invalid_activity_type_id_fails(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        data = {}
+        response = self.client.post(reverse('activity_types-add_activity', kwargs={'pk': 0}), data=data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_add_activity_empty_data_fails(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        data = {}
+        activity_type = ActivityType.objects.create(name="test", user=self.user)
+        response = self.client.post(reverse('activity_types-add_activity', kwargs={'pk': activity_type.id}), data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_add_activity_succeed(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        data = {"time_spent": 3600}
+        turn_on_auto_add_fields(Activity)
+        activity_type = ActivityType.objects.create(name="test1", user=self.user)
+        response = self.client.post(reverse('activity_types-add_activity',
+                                    kwargs={'pk': activity_type.id}), data=data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 class ActivitiesApiTestCase(APITestCase):
 
@@ -186,7 +221,7 @@ class ActivitiesApiTestCase(APITestCase):
         seeder.add_entity(Activity, 100, {
             'user': self.user,
             'activity_type': activity_type,
-            'time_spent': 3600
+            'time_spent': 3600,
         })
         seeder.execute()
         with self.assertNumQueries(2):

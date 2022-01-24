@@ -41,7 +41,7 @@ class ActivityTypesViewSet(ListModelMixin, DestroyModelMixin, CreateModelMixin, 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=['post'], serializer_class=ActivitySerializer)
+    @action(detail=True, methods=['post'], serializer_class=ActivitySerializer, url_name='add_activity')
     def add_activity(self, request, pk):
         # add activity for a activity type
         activity_type = self.get_object()
