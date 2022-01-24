@@ -47,6 +47,10 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=119 --statistics
       - name: Run migrations
         run: python manage.py migrate
-      - name: Run Tests
+      - name: Run Tests And Generate Coverage Report
         run: |
-          python manage.py test
+          pip install coverage
+          coverage run manage.py test
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
