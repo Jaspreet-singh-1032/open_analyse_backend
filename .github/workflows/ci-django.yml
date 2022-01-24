@@ -50,6 +50,6 @@ jobs:
       - name: Run Tests And Generate Coverage Report
         run: |
           pip install coverage
-          coverage run manage.py test
+          coverage run manage.py test && coverage json
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
