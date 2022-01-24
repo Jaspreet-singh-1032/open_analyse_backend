@@ -12,7 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 
-# serializers import
+# serializers imports
 from .serializers import UserSerializer
 
 
