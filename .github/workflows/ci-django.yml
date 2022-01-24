@@ -53,3 +53,4 @@ jobs:
           coverage run manage.py test
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
+        with:
