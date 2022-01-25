@@ -50,6 +50,12 @@ To run the tests:
 python manage.py test
 ```
 
+To run the tests and view code coverage:
+
+```sh
+coverage run manage.py test && coverage report
+```
+
 ## Coding style
 
 This project follows [pep8](https://www.python.org/dev/peps/pep-0008/)
