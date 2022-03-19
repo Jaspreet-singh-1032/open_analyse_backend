@@ -75,6 +75,7 @@ class ActivitesViewSet(ListModelMixin, GenericViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = {
         'created': ['lte', 'gte'],
+        'activity_type': ['exact'],
     }
 
     def get_queryset(self):

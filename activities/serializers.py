@@ -31,7 +31,7 @@ class ActivitySerializer(ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ('id', 'time_spent', 'activity_type')
+        fields = ('id', 'time_spent', 'activity_type', 'created')
 
 
 class FetchActivitiesSerializer(Serializer):
