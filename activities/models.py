@@ -21,6 +21,7 @@ class ActivityType(TimeStampedModel):
 
 class Activity(TimeStampedModel):
     time_spent = models.IntegerField()  # in seconds
+    description = models.CharField(max_length=500, blank=True, null=True)
 
     # relationship fields
     activity_type = models.ForeignKey(
