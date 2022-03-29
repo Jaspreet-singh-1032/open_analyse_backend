@@ -30,6 +30,10 @@ from activities.views import (
     ActivityTypesViewSet,
     ActivitesViewSet
 )
+# social auth
+from social_auth.views import (
+    GoogleLoginView
+)
 
 router = routers.SimpleRouter()
 
@@ -58,5 +62,6 @@ urlpatterns = [
     path('', schema_view.with_ui('redoc', cache_timeout=0),
          name='schema-redoc'),
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('rest-auth/google/', GoogleLoginView.as_view(), name='google_login'),
 ]
