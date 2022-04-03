@@ -49,10 +49,22 @@ INSTALLED_APPS = [
     'django_seed',
     'django_filters',
 
+    # social login
+    'dj_rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'dj_rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     # apps
     'user',
-    'activities'
+    'activities',
+    'social_auth'
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
