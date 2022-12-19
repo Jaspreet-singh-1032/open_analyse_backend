@@ -6,3 +6,5 @@
 
 # testing
 *coverage*
+
+open_analyse/db.sqlite3
